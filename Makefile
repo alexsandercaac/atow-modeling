@@ -14,11 +14,17 @@ venv:			## Create a virtual environment
 	@echo
 	@echo "Run 'source .venv/bin/activate' to enable the environment"
 
+## Activate the virtual environment
+.PHONY: activate
+activate:		## Activate the virtual environment
+	@echo "Activating virtualenv ..."
+	. .venv/bin/activate
+
 ## Remove the virtual environment
 .PHONY: remove_environment
 remove_environment:
-	rm -rf venv
-	@echo "Virtual environment 'env' removed"
+	rm -rf .venv
+	@echo "Virtual environment '.venv' removed"
 
 ## Install requirements on current environment
 .PHONY: prepare_environment
@@ -36,6 +42,10 @@ lint:
 install_pre_commit:
 	pre-commit install
 	pre-commit autoupdate
+
+# Setup everything
+.PHONY: setup
+setup: venv activate prepare_environment install_pre_commit
 
 .PHONY: help
 help:
