@@ -31,6 +31,12 @@ lint:
 	@echo "Running linter ..."
 	@flake8 . --ignore=E402,E129,W504
 
+## Install pre-commit
+.PHONY: install_pre_commit
+install_pre_commit:
+	pre-commit install
+	pre-commit autoupdate
+
 .PHONY: help
 help:
 	@echo "$$(tput bold)Available rules:$$(tput sgr0)"
@@ -70,4 +76,3 @@ help:
 		printf "\n"; \
 	}' \
 	| more $(shell test $(shell uname) = Darwin && echo '--no-init --raw-control-chars')
-
