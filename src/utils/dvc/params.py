@@ -40,4 +40,3 @@ def get_params(stage_fn: str = None):
             'Only returning stage parameters.')
 
     return params
-
