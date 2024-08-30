@@ -1,0 +1,18 @@
+schema: '2.0'
+stages:
+  get_data:
+    cmd: python src/get_data.py
+    deps:
+    - path: src/get_data.py
+      hash: md5
+      md5: ff6eaa4ce2a63eeea778c0334d7075b2
+      size: 1027
+    params:
+      params.yaml:
+        get_data.output_path: data/raw
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 81d752856e2412f55c363df19061d122.dir
+      size: 170060109419
+      nfiles: 367
