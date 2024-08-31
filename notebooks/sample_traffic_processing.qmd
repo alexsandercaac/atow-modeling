@@ -1,0 +1,69 @@
+---
+title: Sample Traffic Processing
+format:
+  html:
+    code-fold: true
+    self-contained: true
+jupyter: python3
+execute:
+  cache: false
+theme:
+  light: cosmo
+  dark: darkly
+warning: false
+---
+
+This is a transcription of the [Using traffic for Exploratory Data Analysis](https://ansperformance.eu/study/data-challenge/data.html) section from the data challenge website.
+
+You can explore the trajectory data using the traffic in a Python notebook.
+
+For example you can load one of the daily trajectory files
+
+```{python}
+import warnings
+from tqdm import TqdmExperimentalWarning
+
+warnings.filterwarnings("ignore", category=TqdmExperimentalWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+from traffic.core import Traffic
+
+import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
+
+t = Traffic.from_file('../data/raw/2022-01-01.parquet')
+```
+
+plot the list of flights
+
+```{python}
+t
+```
+
+a 2D map
+
+```{python}
+trj = t[11]
+trj
+```
+
+and finally a vertical profile with ground speed:
+
+```{python}
+with plt.style.context("traffic"):
+
+    fig, ax = plt.subplots(figsize=(10, 7))
+
+    (
+        trj
+        .plot_time(
+            ax=ax,
+            y=["altitude", "groundspeed"],
+            secondary_y=["groundspeed"]
+        )
+    )
+
+    ax.set_xlabel("")
+    ax.tick_params(axis='x', labelrotation=0)
+    ax.xaxis.set_major_formatter(DateFormatter("%H:%M"))
+```
