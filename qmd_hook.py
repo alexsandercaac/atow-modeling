@@ -34,11 +34,11 @@ for qmd_file in qmd_files:
     # E402: module level import not at top of file
     # E129: visually indented line with same indent as next logical line
     # W504: line break after binary operator
-    response = os.system(f"flake8 {new_file_path} --ignore=E402,E129,W504")
+    response = os.system(f"flake8 {new_file_path} --ignore=E402,E129,W503")
     if response == FLAKE_8_NOT_FOUND_CODE:
         print("Flake8 not installed")
         os.system("pip install flake8")
-        response = os.system(f"flake8 {new_file_path} --ignore=E402,E129,W504")
+        response = os.system(f"flake8 {new_file_path} --ignore=E402,E129,W503")
 
     print(response)
     if response != 0:

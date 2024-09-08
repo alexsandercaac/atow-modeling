@@ -18,4 +18,4 @@ repos:
   rev: 7.1.1
   hooks:
   -   id: flake8
-      args: ['--ignore=E129,W504']
+      args: ['--ignore=E129,W503']
