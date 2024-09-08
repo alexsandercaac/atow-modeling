@@ -12,7 +12,6 @@ stages:
     cmd: python src/cleaning.py
     deps:
       - src/cleaning.py
-      - ${cleaning.output_path}
       - ${cleaning.input_path}
     params:
       - cleaning.output_path
