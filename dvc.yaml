@@ -8,3 +8,15 @@ stages:
     outs:
       - ${get_data.output_path}:
           persist: true
+  cleaning:
+    cmd: python src/cleaning.py
+    deps:
+      - src/cleaning.py
+      - ${cleaning.output_path}
+      - ${cleaning.input_path}
+    params:
+      - cleaning.output_path
+      - cleaning.input_path
+    outs:
+      - ${cleaning.output_path}:
+          persist: true
