@@ -4,3 +4,4 @@ cleaning:
   output_path: data/interim/clean_tracks
   input_path: data/raw
   timedelta_threshold: 10  # in minutes
+
