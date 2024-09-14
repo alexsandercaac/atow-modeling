@@ -1,5 +1,17 @@
 """
-Stage for filtering out the data that is not needed for the analysis.
+    Stage for filtering out the data that is not needed for the analysis.
+
+    A set of parquet files, which are daily partitions of the dataset, are
+    loaded. The data is filtered to remove rows where the timestamp difference
+    between consecutive rows is greater than a given threshold, as these tracks
+    have incomplete data.
+
+    Since the data is partitioned daily, the tracks can be split between two
+    files. To ensure that the tracks are complete, the data from the following
+    day is also loaded.
+
+    The tracks that are saved in the output folder are indexed by the date of
+    departure, and no tracks will be split between two files.
 """
 
 import os
@@ -21,7 +33,14 @@ if not os.path.exists(params["output_path"]):
 
 OUTPUT_PATH = params["output_path"]
 INPUT_PATH = params["input_path"]
+# Threshold that defines the maximum time difference between consecutive
+# measurements. If the difference is greater than this threshold, the track
+# is considered incomplete and will be removed.
 TIMEDELTA_THRESHOLD = params["timedelta_threshold"]
+# Flag that determines if the cleaning process should be restarted. If set to
+# True, all files in the output folder will be removed before the cleaning
+# process starts. If set to False, the cleaning process will skip files that
+# are already present in the output folder.
 RESTART = params["restart"]
 
 TIMEDELTA_THRESHOLD = datetime.timedelta(minutes=TIMEDELTA_THRESHOLD)
@@ -31,6 +50,7 @@ TIMEDELTA_THRESHOLD = datetime.timedelta(minutes=TIMEDELTA_THRESHOLD)
 PARQUET_FILES = [
     file for file in os.listdir(INPUT_PATH) if file.endswith(".parquet")
 ]
+
 # Sort the files to ensure that the order is consistent.
 PARQUET_FILES.sort()
 n_files = len(PARQUET_FILES)
@@ -38,30 +58,27 @@ n_files = len(PARQUET_FILES)
 console.log(f"Found {len(PARQUET_FILES)} files in {INPUT_PATH}")
 console.rule("Starting cleaning process...")
 
-# List files that are already present in the output folder.
 OUTPUT_FILES = [
     file for file in os.listdir(OUTPUT_PATH) if file.endswith(".parquet")
 ]
 
-# Only clean files that are not already present in the output folder.
-PARQUET_FILES = [file for file in PARQUET_FILES if file not in OUTPUT_FILES]
-
-previously_cleaned = n_files - len(PARQUET_FILES)
-
-if previously_cleaned > 0:
-    if RESTART:
-        console.log(
-            "Restart flag is set to True. Cleaning all files in the output"
-            + "folder."
-        )
-        files_to_rm = glob.glob(os.path.join(OUTPUT_PATH, "*.parquet"))
-        for file in files_to_rm:
-            os.remove(file)
-    else:
-        console.log(
-            f"Skipped {previously_cleaned} files that were already in the"
-            + "output folder."
-        )
+if RESTART and len(OUTPUT_FILES) > 0:
+    console.log(
+        "Restart flag is set to True. Cleaning all files in the output"
+        + "folder."
+    )
+    files_to_rm = glob.glob(os.path.join(OUTPUT_PATH, "*.parquet"))
+    for file in files_to_rm:
+        os.remove(file)
+else:
+    # Only clean files that are not already present in the output folder.
+    PARQUET_FILES = [
+        file for file in PARQUET_FILES if file not in OUTPUT_FILES]
+    previously_cleaned = n_files - len(PARQUET_FILES)
+    console.log(
+        f"Skipped {previously_cleaned} files that were already in the"
+        + "output folder."
+    )
 
 for curr_file in track(
         range(len(PARQUET_FILES)), description="Cleaning files..."):
@@ -78,21 +95,17 @@ for curr_file in track(
     # .parquet extension.
     curr_date = PARQUET_FILES[curr_file].split(".")[0]
     curr_date = datetime.datetime.strptime(curr_date, "%Y-%m-%d").date()
-    # Load the flight_id that are present in the current day's data.
+
     flight_ids = daily_data.filter(
         pl.col("timestamp").dt.date() == curr_date
     ).select("flight_id").collect()
 
-    # Filter out the rows that are not in the list of flight ids.
     daily_data = daily_data.filter(pl.col("flight_id").is_in(flight_ids))
 
-    # Create a column with the difference between the timestamp and the
-    # timestamp at the previous row.
     daily_data = daily_data.with_columns(
         timestamp_diff=pl.col("timestamp") - pl.col("timestamp").shift(1)
     )
 
-    # Filter out rows where the timestamp difference is greater than 10 minutes
     daily_data = daily_data.with_columns(
         pl.when(
             (pl.col("timestamp_diff") > TIMEDELTA_THRESHOLD)
@@ -103,19 +116,16 @@ for curr_file in track(
         .alias("jump_indicator")
     )
 
-    # Find the unique flight ids where the jump indicator is 1.
     jump_ids = daily_data.filter(pl.col("jump_indicator") == 1).select(
         "flight_id"
     ).collect()
 
-    # Filter out the rows where the flight id is in the list of jump ids.
     daily_data = daily_data.filter(
         pl.col("flight_id").is_in(jump_ids).not_()
     )
 
     daily_data = daily_data.drop(["timestamp_diff", "jump_indicator"])
 
-    # Collect the data and write it to a new parquet file.
     daily_data.collect().write_parquet(
         os.path.join(OUTPUT_PATH, PARQUET_FILES[curr_file]))
 
