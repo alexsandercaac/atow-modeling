@@ -140,11 +140,13 @@ for curr_file in track(
 
     daily_data = daily_data.drop(["timestamp_diff", "jump_indicator"])
 
+    daily_data = daily_data.collect()
+
     number_of_tracks_kept += daily_data.select(
-        "flight_id").collect().unique().shape[0]
+        "flight_id").unique().shape[0]
     console.log(f"Keeping {number_of_tracks_kept} tracks so far.")
 
-    daily_data.collect().write_parquet(
+    daily_data.write_parquet(
         os.path.join(OUTPUT_PATH, PARQUET_FILES[curr_file]))
 
 console.rule(f"Cleaned data saved to {OUTPUT_PATH}")
