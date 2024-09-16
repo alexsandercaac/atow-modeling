@@ -89,7 +89,7 @@ else:
 total_number_of_tracks = 0
 number_of_tracks_kept = 0
 for curr_file in track(
-        range(len(PARQUET_FILES)), description="Cleaning files..."):
+        range(len(PARQUET_FILES) - 1), description="Cleaning files..."):
     # Both the current file and the following day's file are loaded.
     # The tracks will be indexed by the date of departure. As one flight
     # can have a departure date that is different from the arrival date,

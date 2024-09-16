@@ -1,6 +1,6 @@
 stages:
   get_data:
-    cmd: python src/get_data.py
+    cmd: python3 src/get_data.py
     deps:
       - src/get_data.py
     params:
@@ -9,7 +9,7 @@ stages:
       - ${get_data.output_path}:
           persist: true
   cleaning:
-    cmd: python src/cleaning.py
+    cmd: python3 src/cleaning.py
     deps:
       - src/cleaning.py
       - ${cleaning.input_path}
