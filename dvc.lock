@@ -1,7 +1,7 @@
 schema: '2.0'
 stages:
   get_data:
-    cmd: python src/get_data.py
+    cmd: python3 src/get_data.py
     deps:
     - path: src/get_data.py
       hash: md5
@@ -16,3 +16,25 @@ stages:
       md5: 81d752856e2412f55c363df19061d122.dir
       size: 170060109419
       nfiles: 367
+  cleaning:
+    cmd: python3 src/cleaning.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 81d752856e2412f55c363df19061d122.dir
+      size: 170060109419
+      nfiles: 367
+    - path: src/cleaning.py
+      hash: md5
+      md5: f4df765f8352e8628c6d39b049c54f8a
+      size: 5630
+    params:
+      params.yaml:
+        cleaning.input_path: data/raw
+        cleaning.output_path: data/interim/clean_tracks
+    outs:
+    - path: data/interim/clean_tracks
+      hash: md5
+      md5: 611c2057b262d2f711cbcabe18004a5e.dir
+      size: 97793944396
+      nfiles: 364

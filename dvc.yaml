@@ -1,10 +1,21 @@
 stages:
   get_data:
-    cmd: python src/get_data.py
+    cmd: python3 src/get_data.py
     deps:
       - src/get_data.py
     params:
       - get_data.output_path
     outs:
       - ${get_data.output_path}:
+          persist: true
+  cleaning:
+    cmd: python3 src/cleaning.py
+    deps:
+      - src/cleaning.py
+      - ${cleaning.input_path}
+    params:
+      - cleaning.output_path
+      - cleaning.input_path
+    outs:
+      - ${cleaning.output_path}:
           persist: true
