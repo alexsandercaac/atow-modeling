@@ -29,14 +29,14 @@ def get_params(stage_fn: str = None):
         params = yaml.safe_load(open("params.yaml"))[stage_fn]
     except KeyError as exc:
         print(f'ERROR: Key "{stage_fn}" not in parameters.yaml.')
-        raise KeyError(f"Is the stage file name ({sys.argv[0]}) " +
-                       "the same as the stage name in params.yaml?") from exc
+        raise KeyError(f"Is the stage file name ({sys.argv[0]}) "
+                       + "the same as the stage name in params.yaml?") from exc
     try:
         all_params = yaml.safe_load(open("params.yaml"))['all']
         params = {**params, **all_params}
     except KeyError:
         print(
-            'WARNING: Key "all" not in parameters.yaml.' +
-            'Only returning stage parameters.')
+            'WARNING: Key "all" not in parameters.yaml.'
+            + 'Only returning stage parameters.')
 
     return params
