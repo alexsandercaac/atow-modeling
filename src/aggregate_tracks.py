@@ -24,6 +24,8 @@ OUTPUT_PATH = params["output_path"]
 INPUT_PATH = params["input_path"]
 RESTART = params["restart"]
 
+if not os.path.exists(params["output_path"]):
+    os.makedirs(params["output_path"])
 
 PARQUET_FILES = [
     file for file in os.listdir(INPUT_PATH) if file.endswith(".parquet")
