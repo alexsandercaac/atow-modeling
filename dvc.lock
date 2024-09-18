@@ -26,8 +26,8 @@ stages:
       nfiles: 368
     - path: src/cleaning.py
       hash: md5
-      md5: f4df765f8352e8628c6d39b049c54f8a
-      size: 5630
+      md5: 66ce8bb21636103da959d0213acec8e9
+      size: 5813
     params:
       params.yaml:
         cleaning.input_path: data/raw

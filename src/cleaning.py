@@ -68,6 +68,7 @@ OUTPUT_FILES = [
     file for file in os.listdir(OUTPUT_PATH) if file.endswith(".parquet")
 ]
 
+
 if RESTART and len(OUTPUT_FILES) > 0:
     console.log(
         "Restart flag is set to True. Cleaning all files in the output"
@@ -78,8 +79,11 @@ if RESTART and len(OUTPUT_FILES) > 0:
         os.remove(file)
 else:
     # Only clean files that are not already present in the output folder.
+    OUTPUT_FILES.sort()
+    # The last file in the output folder is the most recent file, and it is
+    # not kept since there could have been issues with the cleaning process.
     PARQUET_FILES = [
-        file for file in PARQUET_FILES if file not in OUTPUT_FILES]
+        file for file in PARQUET_FILES if file not in OUTPUT_FILES[:-1]]
     previously_cleaned = n_files - len(PARQUET_FILES)
     console.log(
         f"Skipped {previously_cleaned} files that were already in the"
