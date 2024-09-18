@@ -19,3 +19,14 @@ stages:
     outs:
       - ${cleaning.output_path}:
           persist: true
+  aggregate_tracks:
+    cmd: python3 src/aggregate_tracks.py
+    deps:
+      - src/aggregate_tracks.py
+      - ${aggregate_tracks.input_path}
+    params:
+      - aggregate_tracks.output_path
+      - aggregate_tracks.input_path
+    outs:
+      - ${aggregate_tracks.output_path}:
+          persist: true
