@@ -3,8 +3,9 @@ This stage aggregates the tracks over their duration, generating a
 dataset with the following columns:
 - track_id
 - maximum_altitude
-- average_altitude
-- average_ground_speed
+- mean_altitude
+- mean_ground_speed
+- mean_vertical_rate
 """
 
 import os
@@ -63,8 +64,9 @@ for file in track(PARQUET_FILES, description="Aggregating tracks..."):
 
     grouped_data = daily_data.group_by("flight_id", maintain_order=True).agg(
         pl.max("altitude").alias("maximum_altitude"),
-        pl.mean("altitude").alias("average_altitude"),
-        pl.mean("groundspeed").alias("average_ground_speed"),
+        pl.mean("altitude").alias("mean_altitude"),
+        pl.mean("groundspeed").alias("mean_ground_speed"),
+        pl.mean("vertical_rate").alias("mean_vertical_rate")
     )
 
     # Save the aggregated data to a new parquet file.
