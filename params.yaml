@@ -8,4 +8,4 @@ cleaning:
 aggregate_tracks:
   input_path: data/interim/clean_tracks
   output_path: data/interim/aggregate_tracks
-  restart: False
+  restart: True
