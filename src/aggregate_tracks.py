@@ -1,10 +1,10 @@
 """
-    This stage aggregates the tracks over their duration, generating a
-    dataset with the following columns:
-    - track_id
-    - maximum_altitude
-    - average_altitude
-    - average_ground_speed
+This stage aggregates the tracks over their duration, generating a
+dataset with the following columns:
+- track_id
+- maximum_altitude
+- average_altitude
+- average_ground_speed
 """
 
 import os
@@ -28,8 +28,7 @@ if not os.path.exists(params["output_path"]):
     os.makedirs(params["output_path"])
 
 PARQUET_FILES = [
-    file for file in os.listdir(INPUT_PATH) if file.endswith(".parquet")
-]
+    file for file in os.listdir(INPUT_PATH) if file.endswith(".parquet")]
 
 PARQUET_FILES.sort()
 n_files = len(PARQUET_FILES)
@@ -38,8 +37,7 @@ console.log(f"Found {len(PARQUET_FILES)} files in {INPUT_PATH}")
 console.rule("Starting track aggreagation process...")
 
 OUTPUT_FILES = [
-    file for file in os.listdir(OUTPUT_PATH) if file.endswith(".parquet")
-]
+    file for file in os.listdir(OUTPUT_PATH) if file.endswith(".parquet")]
 
 if RESTART and len(OUTPUT_FILES) > 0:
     console.log(
@@ -61,18 +59,12 @@ else:
 
 for file in track(PARQUET_FILES, description="Aggregating tracks..."):
     console.log(f"Processing file {file}...")
-    daily_data = pl.read_parquet(os.path.join(INPUT_PATH, file))
+    daily_data = pl.scan_parquet(os.path.join(INPUT_PATH, file))
 
-    # Group the data by track_id and calculate the maximum altitude,
-    # average altitude, and average ground speed.
-    grouped_data = (
-        daily_data.groupby("track_id")
-        .agg(
-            pl.max("altitude").alias("maximum_altitude"),
-            pl.avg("altitude").alias("average_altitude"),
-            pl.avg("ground_speed").alias("average_ground_speed"),
-        )
-        .sort("track_id")
+    grouped_data = daily_data.group_by("flight_id", maintain_order=True).agg(
+        pl.max("altitude").alias("maximum_altitude"),
+        pl.mean("altitude").alias("average_altitude"),
+        pl.mean("groundspeed").alias("average_ground_speed"),
     )
 
     # Save the aggregated data to a new parquet file.
