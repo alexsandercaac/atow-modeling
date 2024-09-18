@@ -26,8 +26,8 @@ stages:
       nfiles: 367
     - path: src/cleaning.py
       hash: md5
-      md5: f4df765f8352e8628c6d39b049c54f8a
-      size: 5630
+      md5: 66ce8bb21636103da959d0213acec8e9
+      size: 5813
     params:
       params.yaml:
         cleaning.input_path: data/raw
@@ -35,6 +35,28 @@ stages:
     outs:
     - path: data/interim/clean_tracks
       hash: md5
-      md5: 611c2057b262d2f711cbcabe18004a5e.dir
-      size: 97793944396
+      md5: aca72256b5a6fb382bd4a305b1bd2fde.dir
+      size: 98217631261
+      nfiles: 364
+  aggregate_tracks:
+    cmd: python3 src/aggregate_tracks.py
+    deps:
+    - path: data/interim/clean_tracks
+      hash: md5
+      md5: aca72256b5a6fb382bd4a305b1bd2fde.dir
+      size: 98217631261
+      nfiles: 364
+    - path: src/aggregate_tracks.py
+      hash: md5
+      md5: f4f63623cb981eb335cf018ab5a1329a
+      size: 2259
+    params:
+      params.yaml:
+        aggregate_tracks.input_path: data/interim/clean_tracks
+        aggregate_tracks.output_path: data/interim/aggregate_tracks
+    outs:
+    - path: data/interim/aggregate_tracks
+      hash: md5
+      md5: d1142dee983bc4d212755747976c7143.dir
+      size: 12959333
       nfiles: 364
