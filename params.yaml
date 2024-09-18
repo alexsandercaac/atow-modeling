@@ -5,4 +5,12 @@ cleaning:
   input_path: data/raw
   timedelta_threshold: 10  # in minutes
   restart: False
-
+aggregate_tracks:
+  input_path: data/interim/clean_tracks
+  output_path: data/interim/aggregate_tracks
+  restart: True
+merge_datasets:
+  input_path:
+    tracks: data/interim/aggregate_tracks
+    flight_list: data/raw/challenge_set.csv
+  output_path: data/processed/flights.csv
