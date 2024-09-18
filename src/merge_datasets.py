@@ -12,7 +12,7 @@ from utils.dvc.params import get_params
 
 
 console = Console()
-params = get_params("merge_dataset")
+params = get_params("merge_datasets")
 
 OUTPUT_PATH = params["output_path"]
 INPUT_PATH = params["input_path"]
@@ -35,11 +35,13 @@ flight_list_data = pl.read_csv(FLIGHT_LIST_PATH)
 merged_data = pl.DataFrame()
 
 for file in track(PARQUET_FILES, description="Merging datasets..."):
-    console.log(f"Processing file {file}...")
     tracks = pl.read_parquet(os.path.join(TRACKS_PATH, file))
+    tracks = tracks.with_columns(
+        tracks["flight_id"].cast(pl.Int64))
     # Left join from tracks to flight list on flight_id
     merged = tracks.join(flight_list_data, on="flight_id", how="left")
     merged_data = pl.concat([merged_data, merged])
 
+merged_data = merged_data.drop_nulls(subset=["tow"])
 merged_data.write_csv(OUTPUT_PATH)
 console.log(f"Dataset saved to {OUTPUT_PATH}")
