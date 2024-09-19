@@ -8,4 +8,9 @@ cleaning:
 aggregate_tracks:
   input_path: data/interim/clean_tracks
   output_path: data/interim/aggregate_tracks
-  restart: True
+  restart: False
+merge_datasets:
+  input_path:
+    tracks: data/interim/aggregate_tracks
+    flight_list: data/raw/challenge_set.csv
+  output_path: data/processed/flights.csv

@@ -30,3 +30,16 @@ stages:
     outs:
       - ${aggregate_tracks.output_path}:
           persist: true
+  merge_datasets:
+    cmd: python3 src/merge_datasets.py
+    deps:
+      - src/merge_datasets.py
+      - ${merge_datasets.input_path.tracks}
+      - ${merge_datasets.input_path.flight_list}
+    params:
+      - merge_datasets.output_path
+      - merge_datasets.input_path.tracks
+      - merge_datasets.input_path.flight_list
+    outs:
+      - ${merge_datasets.output_path}:
+          persist: true

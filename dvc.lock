@@ -13,17 +13,17 @@ stages:
     outs:
     - path: data/raw
       hash: md5
-      md5: 81d752856e2412f55c363df19061d122.dir
-      size: 170060109419
-      nfiles: 367
+      md5: c5d558a971ab553228499a8e7d1c9b23.dir
+      size: 170130869140
+      nfiles: 368
   cleaning:
     cmd: python3 src/cleaning.py
     deps:
     - path: data/raw
       hash: md5
-      md5: 81d752856e2412f55c363df19061d122.dir
-      size: 170060109419
-      nfiles: 367
+      md5: c5d558a971ab553228499a8e7d1c9b23.dir
+      size: 170130869140
+      nfiles: 368
     - path: src/cleaning.py
       hash: md5
       md5: 66ce8bb21636103da959d0213acec8e9
@@ -48,8 +48,8 @@ stages:
       nfiles: 364
     - path: src/aggregate_tracks.py
       hash: md5
-      md5: f4f63623cb981eb335cf018ab5a1329a
-      size: 2259
+      md5: af33fe78f9422e4036f4f63067701401
+      size: 2441
     params:
       params.yaml:
         aggregate_tracks.input_path: data/interim/clean_tracks
@@ -60,3 +60,29 @@ stages:
       md5: d1142dee983bc4d212755747976c7143.dir
       size: 12959333
       nfiles: 364
+  merge_datasets:
+    cmd: python3 src/merge_datasets.py
+    deps:
+    - path: data/interim/aggregate_tracks
+      hash: md5
+      md5: d1142dee983bc4d212755747976c7143.dir
+      size: 12959333
+      nfiles: 364
+    - path: data/raw/challenge_set.csv
+      hash: md5
+      md5: fad9443429290efeb4b959ab447e9308
+      size: 70759721
+    - path: src/merge_datasets.py
+      hash: md5
+      md5: 88977bc3132a9902b2820c0a4a3aca39
+      size: 1415
+    params:
+      params.yaml:
+        merge_datasets.input_path.flight_list: data/raw/challenge_set.csv
+        merge_datasets.input_path.tracks: data/interim/aggregate_tracks
+        merge_datasets.output_path: data/processed/flights.csv
+    outs:
+    - path: data/processed/flights.csv
+      hash: md5
+      md5: adfd1648fa61d9ec7a5d322d7162ce11
+      size: 79481688
