@@ -14,3 +14,11 @@ merge_datasets:
     tracks: data/interim/aggregate_tracks
     flight_list: data/raw/challenge_set.csv
   output_path: data/processed/flights.csv
+  cols_to_drop: [
+    'date',
+    'callsign',
+    'name_adep',
+    'name_ades',
+    'actual_offblock_time',
+    'arrival_time'
+  ]
