@@ -33,8 +33,7 @@ console.log(f"Found {len(PARQUET_FILES)} files in {TRACKS_PATH}")
 console.rule("Starting dataset merging process...")
 
 flight_list_data = pl.read_csv(FLIGHT_LIST_PATH)
-flight_list_data = flight_list_data.drop(
-    COLS_TO_DROP, ignore_missing=True, axis=1)
+flight_list_data = flight_list_data.drop(COLS_TO_DROP)
 merged_data = pl.DataFrame()
 
 for file in track(PARQUET_FILES, description="Merging datasets..."):

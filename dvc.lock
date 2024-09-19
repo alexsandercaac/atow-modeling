@@ -74,8 +74,8 @@ stages:
       size: 70759721
     - path: src/merge_datasets.py
       hash: md5
-      md5: 88977bc3132a9902b2820c0a4a3aca39
-      size: 1415
+      md5: 676204561af18dd9cdff61824c9ac4ba
+      size: 1508
     params:
       params.yaml:
         merge_datasets.input_path.flight_list: data/raw/challenge_set.csv
@@ -84,5 +84,5 @@ stages:
     outs:
     - path: data/processed/flights.csv
       hash: md5
-      md5: adfd1648fa61d9ec7a5d322d7162ce11
-      size: 79481688
+      md5: 456ffe7b56c86d62889ba1d6b549d620
+      size: 46296819
