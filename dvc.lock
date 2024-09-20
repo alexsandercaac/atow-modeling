@@ -74,8 +74,8 @@ stages:
       size: 70759721
     - path: src/merge_datasets.py
       hash: md5
-      md5: 676204561af18dd9cdff61824c9ac4ba
-      size: 1508
+      md5: 32d46e36326b53a58fcd49712c837545
+      size: 1534
     params:
       params.yaml:
         merge_datasets.input_path.flight_list: data/raw/challenge_set.csv
@@ -86,3 +86,47 @@ stages:
       hash: md5
       md5: 456ffe7b56c86d62889ba1d6b549d620
       size: 46296819
+  split_data:
+    cmd: python3 src/split_data.py
+    deps:
+    - path: data/processed/flights.csv
+      hash: md5
+      md5: 456ffe7b56c86d62889ba1d6b549d620
+      size: 46296819
+    - path: src/split_data.py
+      hash: md5
+      md5: 1ba3355810f668f6726bff1cdd4278a1
+      size: 872
+    params:
+      params.yaml:
+        all.random_state: 98
+        split_data.dtypes:
+          flight_id: int64,
+          maximum_altitude: float64,
+          mean_altitude: float64,
+          mean_ground_speed: float64,
+          mean_vertical_rate: float64,
+          adep: str,
+          country_code_adep: str,
+          ades: str,
+          country_code_ades: str,
+          aircraft_type: str,
+          wtc: str,
+          airline: str,
+          flight_duration: int64,
+          taxiout_time: int64,
+          flown_distance: int64,
+          tow: float64
+        split_data.input_path: data/processed/flights.csv
+        split_data.output_path:
+          train: data/processed/train.csv
+          val: data/processed/val.csv
+    outs:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 9f7ce1bdc1e7c6bd443c89434eeecb4d
+      size: 34624125
+    - path: data/processed/val.csv
+      hash: md5
+      md5: ec09758012b3da11c628addd048d9e14
+      size: 11541021

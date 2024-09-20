@@ -43,3 +43,18 @@ stages:
     outs:
       - ${merge_datasets.output_path}:
           persist: true
+  split_data:
+    cmd: python3 src/split_data.py
+    deps:
+      - src/split_data.py
+      - ${split_data.input_path}
+    params:
+      - split_data.output_path
+      - split_data.input_path
+      - split_data.dtypes
+      - all.random_state
+    outs:
+      - ${split_data.output_path.train}:
+          persist: true
+      - ${split_data.output_path.val}:
+          persist: true

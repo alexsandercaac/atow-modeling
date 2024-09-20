@@ -45,5 +45,6 @@ for file in track(PARQUET_FILES, description="Merging datasets..."):
     merged_data = pl.concat([merged_data, merged])
 
 merged_data = merged_data.drop_nulls(subset=["tow"])
+print(merged_data.dtypes)
 merged_data.write_csv(OUTPUT_PATH)
 console.log(f"Dataset saved to {OUTPUT_PATH}")
