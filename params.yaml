@@ -26,7 +26,7 @@ all:
     'wtc',
     'airline'
   ]
-  target: atow
+  target: tow
 get_data:
   output_path: data/raw
 cleaning:
@@ -56,9 +56,9 @@ split_data:
   output_path: 
     train: data/processed/train.csv
     val: data/processed/val.csv
-  train_fraction: 0.9
+  train_fraction: 0.98
 
 feature_selection:
   input_path: data/processed/train.csv
   output_path: models/selected_features.json
-  fs_validation_frac: 0.1
+  fs_validation_frac: 0.05

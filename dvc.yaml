@@ -51,10 +51,25 @@ stages:
     params:
       - split_data.output_path
       - split_data.input_path
-      - split_data.dtypes
+      - all.dtypes
       - all.random_state
+      - all.target
     outs:
       - ${split_data.output_path.train}:
           persist: true
       - ${split_data.output_path.val}:
+          persist: true
+  feature_selection:
+    cmd: python3 src/feature_selection.py
+    deps:
+      - src/feature_selection.py
+      - ${feature_selection.input_path}
+    params:
+      - feature_selection.output_path
+      - feature_selection.input_path
+      - all.dtypes
+      - all.categorical_features
+      - all.target
+    outs:
+      - ${feature_selection.output_path}:
           persist: true
