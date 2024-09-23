@@ -1,3 +1,32 @@
+all:
+  random_state: 98
+  dtypes:
+    flight_id: int64,
+    maximum_altitude: float64,
+    mean_altitude: float64,
+    mean_ground_speed: float64,
+    mean_vertical_rate: float64,
+    adep: str,
+    country_code_adep: str,
+    ades: str,
+    country_code_ades: str,
+    aircraft_type: str,
+    wtc: str,
+    airline: str,
+    flight_duration: int64,
+    taxiout_time: int64,
+    flown_distance: int64,
+    tow: float64
+  categorical_features: [
+    'adep',
+    'country_code_adep',
+    'ades',
+    'country_code_ades',
+    'aircraft_type',
+    'wtc',
+    'airline'
+  ]
+  target: tow
 get_data:
   output_path: data/raw
 cleaning:
@@ -14,3 +43,22 @@ merge_datasets:
     tracks: data/interim/aggregate_tracks
     flight_list: data/raw/challenge_set.csv
   output_path: data/processed/flights.csv
+  cols_to_drop: [
+    'date',
+    'callsign',
+    'name_adep',
+    'name_ades',
+    'actual_offblock_time',
+    'arrival_time'
+  ]
+split_data:
+  input_path: data/processed/flights.csv
+  output_path: 
+    train: data/processed/train.csv
+    val: data/processed/val.csv
+  train_fraction: 0.98
+
+feature_selection:
+  input_path: data/processed/train.csv
+  output_path: models/selected_features.json
+  fs_validation_frac: 0.05

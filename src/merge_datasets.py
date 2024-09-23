@@ -16,6 +16,7 @@ params = get_params("merge_datasets")
 
 OUTPUT_PATH = params["output_path"]
 INPUT_PATH = params["input_path"]
+COLS_TO_DROP = params["cols_to_drop"]
 TRACKS_PATH = INPUT_PATH["tracks"]
 FLIGHT_LIST_PATH = INPUT_PATH["flight_list"]
 
@@ -32,6 +33,7 @@ console.log(f"Found {len(PARQUET_FILES)} files in {TRACKS_PATH}")
 console.rule("Starting dataset merging process...")
 
 flight_list_data = pl.read_csv(FLIGHT_LIST_PATH)
+flight_list_data = flight_list_data.drop(COLS_TO_DROP)
 merged_data = pl.DataFrame()
 
 for file in track(PARQUET_FILES, description="Merging datasets..."):
@@ -43,5 +45,6 @@ for file in track(PARQUET_FILES, description="Merging datasets..."):
     merged_data = pl.concat([merged_data, merged])
 
 merged_data = merged_data.drop_nulls(subset=["tow"])
+print(merged_data.dtypes)
 merged_data.write_csv(OUTPUT_PATH)
 console.log(f"Dataset saved to {OUTPUT_PATH}")

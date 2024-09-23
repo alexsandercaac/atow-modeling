@@ -74,8 +74,8 @@ stages:
       size: 70759721
     - path: src/merge_datasets.py
       hash: md5
-      md5: 88977bc3132a9902b2820c0a4a3aca39
-      size: 1415
+      md5: 32d46e36326b53a58fcd49712c837545
+      size: 1534
     params:
       params.yaml:
         merge_datasets.input_path.flight_list: data/raw/challenge_set.csv
@@ -84,5 +84,96 @@ stages:
     outs:
     - path: data/processed/flights.csv
       hash: md5
-      md5: adfd1648fa61d9ec7a5d322d7162ce11
-      size: 79481688
+      md5: 456ffe7b56c86d62889ba1d6b549d620
+      size: 46296819
+  split_data:
+    cmd: python3 src/split_data.py
+    deps:
+    - path: data/processed/flights.csv
+      hash: md5
+      md5: 456ffe7b56c86d62889ba1d6b549d620
+      size: 46296819
+    - path: src/split_data.py
+      hash: md5
+      md5: 9ba9dff901f5f8133ece8135b00e2134
+      size: 1034
+    params:
+      params.yaml:
+        all.dtypes:
+          flight_id: int64,
+          maximum_altitude: float64,
+          mean_altitude: float64,
+          mean_ground_speed: float64,
+          mean_vertical_rate: float64,
+          adep: str,
+          country_code_adep: str,
+          ades: str,
+          country_code_ades: str,
+          aircraft_type: str,
+          wtc: str,
+          airline: str,
+          flight_duration: int64,
+          taxiout_time: int64,
+          flown_distance: int64,
+          tow: float64
+        all.random_state: 98
+        all.target: tow
+        split_data.input_path: data/processed/flights.csv
+        split_data.output_path:
+          train: data/processed/train.csv
+          val: data/processed/val.csv
+    outs:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: ed91ac686c6fd46a5b6118031bd7b132
+      size: 45241740
+    - path: data/processed/val.csv
+      hash: md5
+      md5: d148757b3cba5b4a7b38b73994fdbf0d
+      size: 923406
+  feature_selection:
+    cmd: python3 src/feature_selection.py
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: ed91ac686c6fd46a5b6118031bd7b132
+      size: 45241740
+    - path: src/feature_selection.py
+      hash: md5
+      md5: fa05ab5995f50c6a1e6ebfd5327d5bfa
+      size: 1595
+    params:
+      params.yaml:
+        all.categorical_features:
+        - adep
+        - country_code_adep
+        - ades
+        - country_code_ades
+        - aircraft_type
+        - wtc
+        - airline
+        all.dtypes:
+          flight_id: int64,
+          maximum_altitude: float64,
+          mean_altitude: float64,
+          mean_ground_speed: float64,
+          mean_vertical_rate: float64,
+          adep: str,
+          country_code_adep: str,
+          ades: str,
+          country_code_ades: str,
+          aircraft_type: str,
+          wtc: str,
+          airline: str,
+          flight_duration: int64,
+          taxiout_time: int64,
+          flown_distance: int64,
+          tow: float64
+        all.target: tow
+        feature_selection.input_path: data/processed/train.csv
+        feature_selection.output_path: models/selected_features.json
+    outs:
+    - path: models/selected_features.json
+      hash: md5
+      md5: 42821ee12579958d5bf73d8b0b29194f
+      size: 223
