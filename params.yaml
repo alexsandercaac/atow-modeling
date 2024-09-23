@@ -62,3 +62,10 @@ feature_selection:
   input_path: data/processed/train.csv
   output_path: models/selected_features.json
   fs_validation_frac: 0.05
+
+baseline_model:
+  input_path: data/processed/train.csv
+  output_path: models/baseline_model.pkl
+  baseline_validation_frac: 0.05
+  hparams_grid:
+    alpha: [0.1, 0.5, 1.0, 2.0, 5.0, 10.0]

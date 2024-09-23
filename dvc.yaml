@@ -67,9 +67,28 @@ stages:
     params:
       - feature_selection.output_path
       - feature_selection.input_path
+      - feature_selection.fs_validation_frac
+      - all.random_state
       - all.dtypes
       - all.categorical_features
       - all.target
     outs:
       - ${feature_selection.output_path}:
+          persist: true
+          cache: false
+  baseline_model:
+    cmd: python3 src/baseline_model.py
+    deps:
+      - src/baseline_model.py
+      - ${baseline_model.input_path}
+    params:
+      - baseline_model.output_path
+      - baseline_model.input_path
+      - baseline_model.baseline_validation_frac
+      - all.random_state
+      - all.dtypes
+      - all.categorical_features
+      - all.target
+    outs:
+      - ${baseline_model.output_path}:
           persist: true
