@@ -32,6 +32,8 @@ if not os.path.exists(os.path.dirname(OUTPUT_PATH)):
     os.makedirs(os.path.dirname(OUTPUT_PATH))
 
 training_data = pd.read_csv(INPUT_PATH, dtype=DTYPES)
+training_data = training_data.dropna()
+training_data = training_data.drop(CATEGORICAL_FEATURES, axis=1)
 validation_data = training_data.sample(
     frac=BASELINE_VALIDATION_FRAC, random_state=RANDOM_STATE
 )
