@@ -169,7 +169,9 @@ stages:
           taxiout_time: int64,
           flown_distance: int64,
           tow: float64
+        all.random_state: 98
         all.target: tow
+        feature_selection.fs_validation_frac: 0.05
         feature_selection.input_path: data/processed/train.csv
         feature_selection.output_path: models/selected_features.json
     outs:
@@ -177,3 +179,51 @@ stages:
       hash: md5
       md5: 42821ee12579958d5bf73d8b0b29194f
       size: 223
+  baseline_model:
+    cmd: python3 src/baseline_model.py
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: ed91ac686c6fd46a5b6118031bd7b132
+      size: 45241740
+    - path: src/baseline_model.py
+      hash: md5
+      md5: 9f8f7d44315f8b8a3d354ba470b19dc5
+      size: 2207
+    params:
+      params.yaml:
+        all.categorical_features:
+        - adep
+        - country_code_adep
+        - ades
+        - country_code_ades
+        - aircraft_type
+        - wtc
+        - airline
+        all.dtypes:
+          flight_id: int64,
+          maximum_altitude: float64,
+          mean_altitude: float64,
+          mean_ground_speed: float64,
+          mean_vertical_rate: float64,
+          adep: str,
+          country_code_adep: str,
+          ades: str,
+          country_code_ades: str,
+          aircraft_type: str,
+          wtc: str,
+          airline: str,
+          flight_duration: int64,
+          taxiout_time: int64,
+          flown_distance: int64,
+          tow: float64
+        all.random_state: 98
+        all.target: tow
+        baseline_model.baseline_validation_frac: 0.05
+        baseline_model.input_path: data/processed/train.csv
+        baseline_model.output_path: models/baseline_model.pkl
+    outs:
+    - path: models/baseline_model.pkl
+      hash: md5
+      md5: cefefa226347edeaef5aa7e674a8b5e4
+      size: 1494

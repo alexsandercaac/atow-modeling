@@ -12,6 +12,8 @@ import pickle
 from rich.console import Console
 import pandas as pd
 from sklearn.linear_model import Lasso
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.pipeline import Pipeline
 
 from utils.dvc.params import get_params
 
@@ -33,7 +35,8 @@ if not os.path.exists(os.path.dirname(OUTPUT_PATH)):
 
 training_data = pd.read_csv(INPUT_PATH, dtype=DTYPES)
 training_data = training_data.dropna()
-training_data = training_data.drop(CATEGORICAL_FEATURES, axis=1)
+training_data = training_data.drop(
+    CATEGORICAL_FEATURES + ['flight_id'], axis=1)
 validation_data = training_data.sample(
     frac=BASELINE_VALIDATION_FRAC, random_state=RANDOM_STATE
 )
@@ -52,16 +55,23 @@ console.rule("Training baseline Lasso model...")
 
 best_score = float("inf")
 best_model = None
+scaler = MinMaxScaler()
 for alpha in HPARAMS_GRID["alpha"]:
     model = Lasso(alpha=alpha, random_state=RANDOM_STATE)
-    model.fit(x_train, y_train)
-    score = model.score(x_val, y_val)
+    pipeline = Pipeline([("scaler", scaler), ("model", model)], memory=None)
+    pipeline.fit(x_train, y_train)
+    score = pipeline.score(x_val, y_val)
     if score < best_score:
         best_score = score
-        best_model = model
+        best_model = pipeline
 
 console.rule("Baseline Lasso model training completed.")
 console.log(f"Best model score: {best_score}")
+
+for feature, coef in zip(
+    x_train.columns, best_model.named_steps["model"].coef_
+):
+    console.log(f"{feature}: {coef}")
 
 with open(OUTPUT_PATH, "wb") as f:
     pickle.dump(best_model, f)
